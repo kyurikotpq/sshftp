@@ -1,0 +1,21 @@
+CONFIGURATION FILES
+/etc/apache2/sites-available/skill1.wsc.com.conf
+
+DISABLE DEFAULT SITE CONFIG
+
+ENABLE NEW SITE
+
+RESTART SERVER
+
+PUTTING STUFF IN THE FOLDER
+- cd /var/www/html/skill1.wsc.com/public_html
+- sudo cp ~/Desktop/index.php index.php
+
+CREATING SCRIPTS
+- sudo nano ~/Desktop/script_name.sh
+- type commands, save file
+- chmod +x ~/Desktop/script_name.sh
+
+RUNNING SCRIPTS
+- navigate to correct directory
+- ./script_name.sh
