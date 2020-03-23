@@ -3,6 +3,7 @@ from os import path
 import sys
 from copy_commands import copy_commands
 from create_conf import create_conf
+from create_docker import create_docker
 
 def create_user(group, username, password, subdomain, mysql_username, mysql_password):
     # Don't do anything if user already exists
@@ -27,14 +28,6 @@ def create_user(group, username, password, subdomain, mysql_username, mysql_pass
         os.system(f"sudo cp -vf /etc/passwd {CHROOT_DIR}/etc")
         os.system(f"sudo cp -vf /etc/group {CHROOT_DIR}/etc")
 
-        # Create the conf and enable it
-        conf_text = create_conf(subdomain)
-        os.system(f'sudo echo \'{conf_text}\' > "$PWD"/httpd/{subdomain}.conf')
-        os.system(f'sudo ln -s "$PWD"/httpd/{subdomain}.conf /etc/apache2/sites-enabled/{subdomain}.conf')
-
-        # Add to hosts file
-        os.system(f"sudo sed -i '$ a 127.0.0.1 {subdomain}' /etc/hosts")
-
         # Populate the dev folder - thanks tecmint
         os.system(f"sudo mknod -m 666 {CHROOT_DIR}/dev/null c 1 3")
         os.system(f"sudo mknod -m 666 {CHROOT_DIR}/dev/tty c 5 0")
@@ -44,9 +37,8 @@ def create_user(group, username, password, subdomain, mysql_username, mysql_pass
         # Copy over the requried scripts for shell to work
         copy_commands(username)
 
-        # Handle the Apache side of things
-        os.system(f"sudo mkdir /var/www/html/{subdomain}/")
-        os.system(f"sudo mkdir /var/www/html/{subdomain}/public_html/")
+        # Create a folder where files will be deployed
+        os.system(f"sudo mkdir -p /var/www/html/{subdomain}/public_html/")
 
         # Mount /html to /var/www/html
         os.system(f"sudo sed -i '$ a \/var\/www\/html\/{subdomain}\/public_html \/home\/{username}\/ftp\/html none bind 0 0' /etc/fstab")
@@ -60,40 +52,28 @@ def create_user(group, username, password, subdomain, mysql_username, mysql_pass
         os.system(f"sudo chown www-data:www-data {CHROOT_DIR}/html")
         os.system(f"sudo chmod -R 777 {CHROOT_DIR}/html")
 
-        # Put a index.php file in html so that people know it works
-        os.system(f"sudo echo '<?php echo \"{subdomain}\"; phpinfo(); ?>' > {CHROOT_DIR}/html/index.php ")
-
         print("---------------------------")
         print(f"User {username} account setup successful.")
-        print("Creating MySQL account...")
+        print(f"Creating Docker container for {username}...")
 
-        # Create mysql user
-        MYSQL_CONNECT = f"mysql -u {mysql_username} -p{mysql_password}"
-        user_creation_command = [
-            f"DROP USER IF EXISTS '{username}'@'%';",
-            "FLUSH PRIVILEGES;",
-            f"CREATE USER '{username}'@'%' IDENTIFIED BY '{password}';",
-            f"GRANT USAGE ON *.* TO '{username}'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;",
-            f"CREATE DATABASE {username}_test;"
-        ]
-        delimiter = "\n"
-        user_creation_sql = f'{MYSQL_CONNECT} -e "{delimiter.join(user_creation_command)}"'
-        os.system(user_creation_sql)
-        
-        print("Granting suitable privileges...")
-        
-        db_prefix = username + r'\_%'
-        
-        # need to escape the backticks or the shell will interpret them!
-        # It's not a 'raw' issue on Python's part
-        # https://stackoverflow.com/questions/39389231/backtick-is-not-working-to-run-mysql-queries-in-shell-script
-        grant_prefix_command = f"GRANT ALL PRIVILEGES ON \`{db_prefix}\`.* TO '{username}'@'%';"
-        grant_prefix_sql = f'{MYSQL_CONNECT} -e "{grant_prefix_command}"'
-        os.system(grant_prefix_sql)
+        # Create a new Docker container,
+        # Mapping the folders and ports appropriately
+        create_docker(CHROOT_DIR, username, password)
 
+        # Put a index.php file in html so that people know it works
+        os.system(f"sudo echo '<?php echo \"{subdomain}\"; phpinfo(); ?>' > {CHROOT_DIR}/html/index.php ")
+        
+        # Create the Apache conf and enable it
+        conf_text = create_conf(subdomain)
+        os.system(f'sudo echo \'{conf_text}\' > /etc/apache2/sites-available/{subdomain}.conf')
+        os.system(f'sudo ln -s /etc/apache2/sites-available/{subdomain}.conf /etc/apache2/sites-enabled/{subdomain}.conf')
+
+        # Add to hosts file
+        os.system(f"sudo sed -i '$ a 127.0.0.1 {subdomain}' /etc/hosts")
+        
         # Restart Apache
         os.system("sudo systemctl restart apache2")
 
         print("---------------------------")
-        print(f"Successfully setup MySQL, FTP, SSH & virtual host for user {username}")
+        print(f"Successfully setup FTP, SSH & Apache for user {username}")
         return True

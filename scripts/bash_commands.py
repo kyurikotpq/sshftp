@@ -1,9 +1,6 @@
 # THIS IS MEANT TO BE AN IMPORTED FILE
 # Commands to import
 BASH_COMMANDS = [
-    "/bin/mysql",
-    "/bin/php",
-    "/bin/node",
     "/bin/date",
     "/bin/ls",
     "/bin/chmod",
@@ -49,5 +46,4 @@ BASH_LIB = [
     "/lib/x86_64-linux-gnu/liblzma.so.5",
     "/lib/x86_64-linux-gnu/libicuuc.so.63",
     "/lib/x86_64-linux-gnu/libffi.so.6",
-    
 ]
