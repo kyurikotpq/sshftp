@@ -7,8 +7,6 @@ mkdir -p /usr/share/webapps/ && cd /usr/share/webapps/ && \
     chmod -R 777 /usr/share/webapps/ && \
     ln -s /usr/share/webapps/phpmyadmin/ /var/www/localhost/htdocs/phpmyadmin
 
-echo "<h1>$USERNAME.domain.com IS LIVE!</h1>" > /var/www/localhost/htdocs/index.html
-
 # start apache
 echo "Starting httpd"
 httpd
@@ -51,6 +49,10 @@ cat << EOF > $tfile
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY "$MYSQL_ROOT_PASSWORD" WITH GRANT OPTION;
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
     UPDATE user SET password=PASSWORD("") WHERE user='root' AND host='localhost';
+
+    CREATE USER \'$USERNAME\'@'%' IDENTIFIED BY "$MYSQL_ROOT_PASSWORD";
+    GRANT ALL PRIVILEGES ON *.* TO \'$USERNAME\'@'%' IDENTIFIED BY "$MYSQL_ROOT_PASSWORD" WITH GRANT OPTION;
+
     FLUSH PRIVILEGES;
 EOF
 

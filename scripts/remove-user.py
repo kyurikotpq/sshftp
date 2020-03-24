@@ -29,7 +29,7 @@ os.system(f"sudo rm -rf /var/www/html/{subdomain}")
 os.system(f"sudo userdel {username}")
 
 # Remove Docker container
-os.system(f"sudo docker rm {username}");
+os.system(f"sudo docker stop {username} && sudo docker rm {username}")
 
 # restart apache
 os.system("sudo systemctl restart apache2")

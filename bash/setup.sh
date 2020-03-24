@@ -10,15 +10,17 @@ sudo ufw allow ssh # sudo ufw allow 22
 # Install net-tools
 sudo apt-get install net-tools
 
-# Install Apache
-sudo apt-get install apache2
+# Install Apache and enable Proxy-ing modules
+sudo apt-get install -y apache2
+sudo a2enmod proxy proxy_http
+sudo systemctl restart apache2
 
 # Install vsftpd
-sudo apt-get install vsftpd
+sudo apt-get install -y vsftpd
 
 # Install SSH
-sudo apt-get install openssh-server
+sudo apt-get install -y openssh-server
 
 # Install Docker and build the image
-sudo apt-get install docker.io
-cd ./docker && sudo docker build -t $USER/alpine-lamp .
+sudo apt-get install -y docker.io
+cd ./docker && sudo docker build -t kyurikotpq/lampm2 .

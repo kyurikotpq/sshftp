@@ -30,6 +30,7 @@ Container port (8080) can be random generated?
 # Host System requirements
 - Tested with Ubuntu 19.10
 - Packages: net-tools, vsftpd, apache2, Python 3.7.5
+- Apache: `sudo a2enmod proxy proxy_http`
 
 ## Remember to switch to Python 3.7 from Python 2
 (assuming you have 3.7.5 already installed)
@@ -41,8 +42,9 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 ```
 
 ## If you are starting with a fresh installation of Ubuntu
-1. Navigate to the project root directory 
-2. Run setup.sh: `./bash/setup.sh`.
+1. Navigate to the project root directory
+2. Make the script executable: `sudo chmod +x ./bash/setup.sh`
+3. Run setup.sh: `./bash/setup.sh`.
 It will take care of the installation of the necessary packages for this project to run.
 
 ## If you have already installed the packages

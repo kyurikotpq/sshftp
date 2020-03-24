@@ -1,7 +1,7 @@
 import os
 from os import path
 import sys
-import bash_commands
+from . import bash_commands
 
 # username: Linux Username of the user
 def copy_commands(username):

@@ -1,9 +1,13 @@
-def create_conf(subdomain):
+def create_conf(subdomain, port):
     lines = [
         "<VirtualHost *:80>",
         "ServerAdmin webmaster@localhost",
         f"ServerName {subdomain}",
-        f"DocumentRoot /var/www/html/{subdomain}/public_html",
+
+        "ProxyPreserveHost On",
+        f"ProxyPass / http://localhost:{port}/",
+        f"ProxyPassReverse / http://localhost:{port}/",
+
         "ErrorLog ${APACHE_LOG_DIR}/error.log",
         "CustomLog ${APACHE_LOG_DIR}/access.log combined",
         "</VirtualHost>"
