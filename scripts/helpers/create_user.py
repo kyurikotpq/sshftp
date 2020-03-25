@@ -1,7 +1,6 @@
 import os
 from os import path
 import sys
-from .copy_commands import copy_commands
 from .create_conf import create_conf
 from .create_docker import create_docker
 
@@ -18,26 +17,16 @@ def create_user(PORT, group, username, password, subdomain):
         # Create chroot parent dir
         os.system(f"sudo mkdir {PARENT_DIR}/")
 
-        # create and add user to group
+        # create and add user to specified group and docker group
         # Creating and specifying home user dir will automatically create the dir
         os.system(
             f"sudo useradd -g {group} -m -d {CHROOT_DIR}/ -s /bin/bash -p $(openssl passwd -1 {password}) {username}")
 
         # Create other subdir
-        os.system(f"sudo mkdir {CHROOT_DIR}/dev/")
         os.system(f"sudo mkdir {CHROOT_DIR}/html/")
-        os.system(f"sudo mkdir {CHROOT_DIR}/etc/")
-        os.system(f"sudo cp -vf /etc/passwd {CHROOT_DIR}/etc")
-        os.system(f"sudo cp -vf /etc/group {CHROOT_DIR}/etc")
-
-        # Populate the dev folder - thanks tecmint
-        os.system(f"sudo mknod -m 666 {CHROOT_DIR}/dev/null c 1 3")
-        os.system(f"sudo mknod -m 666 {CHROOT_DIR}/dev/tty c 5 0")
-        os.system(f"sudo mknod -m 666 {CHROOT_DIR}/dev/zero c 1 5")
-        os.system(f"sudo mknod -m 666 {CHROOT_DIR}/dev/random c 1 8")
 
         # Copy over the requried scripts for shell to work
-        copy_commands(username)
+        os.system(f'sudo cp "$PWD"/default-files/forward.sh {CHROOT_DIR}/')
 
         # Create a folder where files will be deployed
         os.system(f"sudo mkdir -p /var/www/html/{subdomain}/public_html/")

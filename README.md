@@ -31,6 +31,7 @@ Container port (8080) can be random generated?
 - Tested with Ubuntu 19.10
 - Packages: net-tools, vsftpd, apache2, Python 3.7.5
 - Apache: `sudo a2enmod proxy proxy_http`
+- VSFTPD: `chroot_local_user=YES` (uncommented)
 
 ## Remember to switch to Python 3.7 from Python 2
 (assuming you have 3.7.5 already installed)
@@ -47,7 +48,7 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 3. Run setup.sh: `./bash/setup.sh`.
 It will take care of the installation of the necessary packages for this project to run.
 
-## If you have already installed the packages
+## If you have already installed and configured the packages
 ```bash
 sudo apt-get install docker.io # ONLY if Docker is not yet installed 
 cd ./docker && sudo docker build -t $USER/alpine-lamp .
@@ -81,5 +82,6 @@ python ./scripts/create-users.py google.com ./sample-files/users.csv
 These scripts aid in the execution of the above standalone scripts by exporting functionalities into one Python function. **They cannot be run from the command line.**
 - create_user.py: Handles creation of one user
 - create_conf.py: Handles creation of .conf file for Apache
+- create_docker.py: Handles creation of Docker container named after the user's username
 - bash_commands.py: List of file paths to binaries, etc. to enable commands in the user's SSH shell
 - copy_commands.py: Copies the binaries, etc. defined in `bash_commands.py` to the user's home directory

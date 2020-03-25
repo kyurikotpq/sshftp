@@ -34,7 +34,7 @@ with open(csv_path, encoding="utf8") as csv_file:
                 username = row[1]
                 password = row[2]
 
-                SSHD_CONFIG_STRING = f"Match Group {group}\\n    ChrootDirectory /home/%u/ftp\\n"
+                SSHD_CONFIG_STRING = f"Match Group {group}\\n    ForceCommand %u/forward.sh\\n"
                 SSHD_CONFIG_STRING += "    AllowTCPForwarding no\\n    X11Forwarding no\\n"
                 sshd_config_handle = [
                     f"if ! grep '{group}:' /etc/group",
@@ -65,4 +65,5 @@ with open(csv_path, encoding="utf8") as csv_file:
                 if success:
                     user_count += 1
         line_count += 1
+    
     print(f"Processed {line_count} lines, created {user_count} users.")
