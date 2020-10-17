@@ -1,5 +1,13 @@
 # sshftp scripts
-A collection of Python scripts to make Linux webserver sysadmin easier.
+A collection of Python scripts that (run Bash commands to) easily create LAMP instances in Docker. You can easily create and delete users on your Linux machine; these users can deploy and manage their websites via SSH and FTP.
+
+**Use Case**
+- Users need to be able to deploy their websites on this server
+- Users need to be segregated during SSH and FTP sessions, i.e. they can't access another user's files
+- In the SSH sessions, shared software like `php`, `mysql` should be accessible
+
+**Backstory**
+- Please see the file [Backstory.md](/Backstory.md)
 
 **Why Python and not Bash:** 
 1) I'm trying to pick up Python
@@ -7,25 +15,6 @@ A collection of Python scripts to make Linux webserver sysadmin easier.
 
 # Acknowledgements
 Thank you @glats for your alpine-lamp with phpmyadmin Dockerfile. It has helped me immensely in getting started with Docker and implementing my own image that suits the needs of this project. For more information, you may view the `docker` folder in this project.
-
-# A few observations
-```bash
-cd ./docker
-sudo docker build -t kyurikotpq/alpine-lamp .
-
-sudo docker run -d -v ~/Desktop/sshftp/containers:/var/www/localhost/htdocs/ -e MYSQL_ROOT_PASSWORD=lamp-1 -p 8080:80 --name lamp-1 kyurikotpq/alpine-lamp
-
-sudo docker exec -it lamp-exec -it lamp-1 /bin/sh
-```
-Container is accessible via localhost:8080 in the browser.
-Container's htdocs is bound to sshftp/containers thanks to the -v parameter. We can use this for ftp and use the ftp chroot folder instead for apache-rendering. Then on the container side, it will just be handling the phpmyadmin stuff tbh. But i guess it works both ways...
-
-What if i don't bind?
-
-Container name can be admin number.
-Container port (8080) can be random generated?
-
----
 
 # Host System requirements
 - Tested with Ubuntu 19.10
