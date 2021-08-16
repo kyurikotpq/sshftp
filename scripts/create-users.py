@@ -34,23 +34,6 @@ with open(csv_path, encoding="utf8") as csv_file:
                 username = row[1]
                 password = row[2]
 
-                SSHD_CONFIG_STRING = f"Match Group {group}\\n    ForceCommand %u/forward.sh\\n"
-                SSHD_CONFIG_STRING += "    AllowTCPForwarding no\\n    X11Forwarding no\\n"
-                sshd_config_handle = [
-                    f"if ! grep '{group}:' /etc/group",
-                    f"then sudo groupadd {group}",
-                    "fi",
-                    f"if ! grep 'Match Group {group}' /etc/ssh/sshd_config",
-                    "then",
-                    f'  sudo cp /etc/ssh/sshd_config "$PWD"/backup/ssh/sshd_config_{time.time()}',
-                    f"  sudo sed -i '$ a {SSHD_CONFIG_STRING}' /etc/ssh/sshd_config",
-                    "fi"
-                ]
-                delimiter = "\n"
-
-                # add to sshd config if group is new
-                os.system(delimiter.join(sshd_config_handle))
-                
                 # form the subdomain
                 subdomain = username + "." + domain
 
