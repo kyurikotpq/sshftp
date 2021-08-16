@@ -9,6 +9,9 @@ sudo ufw allow ssh # sudo ufw allow 22
 sudo ufw allow 21 # Allow FTP
 sudo ufw allow 2222 # Allow SFTP configured on port 2222
 
+# Disable IPv6 firewall
+sed -i 's/IPV6=yes/IPV6=no' /etc/default/ufw
+
 # Install net-tools
 sudo apt-get install net-tools
 
