@@ -18,9 +18,8 @@ Thank you @glats for your alpine-lamp with phpmyadmin Dockerfile. It has helped 
 
 # Host System requirements
 - Tested with Ubuntu 19.10
-- Packages: net-tools, vsftpd, apache2, Python 3.7.5
+- Packages: net-tools, apache2, Python 3.7.5
 - Apache: `sudo a2enmod proxy proxy_http`
-- VSFTPD: `chroot_local_user=YES` (uncommented)
 
 ## Remember to switch to Python 3.7 from Python 2
 (assuming you have 3.7.5 already installed)
